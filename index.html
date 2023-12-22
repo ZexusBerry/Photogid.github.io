@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Converter</title>
+    <!-- Подключение библиотеки HTML2Canvas -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        #imageContainer {
+            margin-bottom: 20px;
+        }
+
+        label {
+            color: #333;
+            margin-right: 10px;
+        }
+
+        #formatSelect {
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        #convertButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #convertButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Image Converter</h1>
+
+    <input type="file" id="imageInput" accept="image/*" required>
+
+    <div id="imageContainer">
+        <!-- Изображение будет отображаться здесь -->
+    </div>
+
+    <label for="formatSelect">Select format:</label>
+    <select id="formatSelect" required>
+        <option value="png">PNG</option>
+        <option value="jpeg">JPEG</option>
+        <option value="ico">ICO</option>
+        <option value="gif">GIF</option>
+        <option value="webp">WebP</option>
+        <option value="svg">SVG</option>
+    </select>
+
+    <button type="button" id="convertButton" onclick="convertAndDownload()">Convert and Download</button>
+
+    <script>
+        function convertAndDownload() {
+            var imageInput = document.getElementById('imageInput');
+            var imageContainer = document.getElementById('imageContainer');
+            var formatSelect = document.getElementById('formatSelect');
+
+            // Проверка, было ли выбрано изображение
+            if (imageInput.files.length === 0) {
+                alert('Please choose an image before converting.');
+                return;
+            }
+
+            // Отображение выбранного изображения
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                imageContainer.innerHTML = '<img src="' + e.target.result + '" alt="Uploaded Image">';
+            };
+            reader.readAsDataURL(imageInput.files[0]);
+
+            // Создание объекта HTML2Canvas
+            html2canvas(imageContainer).then(function(canvas) {
+                // Создание ссылки для скачивания
+                var link = document.createElement('a');
+                link.href = canvas.toDataURL('image/' + formatSelect.value);
+                link.download = 'converted_image.' + formatSelect.value;
+
+                // Добавление ссылки на страницу и эмуляция клика
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        }
+    </script>
+
+</body>
+</html>
